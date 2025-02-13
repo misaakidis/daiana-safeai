@@ -72,6 +72,3 @@ COPY --from=builder /app/web/dist /app/web/dist
 COPY docker-entrypoint.sh /app/
 
 EXPOSE 3000 4173
-
-# Set the command to run the application
-CMD ["sh", "-c", "docker-entrypoint.sh"]
