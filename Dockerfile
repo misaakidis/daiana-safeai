@@ -2,7 +2,7 @@
 FROM node:23.3.0-slim AS builder
 
 # Install pnpm globally and install necessary build tools
-RUN npm install -g pnpm@9.15.1 && \
+RUN npm install -g pnpm@9.15.1 vite && \
     apt-get update && \
     apt-get install -y git python3 make g++ && \
     apt-get clean && \
@@ -23,9 +23,19 @@ COPY tsconfig.json ./
 COPY ./src ./src
 COPY ./characters ./characters
 
+# Copy web directory for frontend client
+COPY ./web ./web
+
 # Install dependencies and build the project
 RUN pnpm install 
 RUN pnpm build 
+
+# Build frontend
+WORKDIR /app/web
+COPY ./web/package.json ./
+COPY ./web/pnpm-lock.yaml ./
+RUN pnpm install
+RUN vite build
 
 # Create dist directory and set permissions
 RUN mkdir -p /app/dist && \
@@ -56,6 +66,10 @@ COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/tsconfig.json /app/
 COPY --from=builder /app/pnpm-lock.yaml /app/
 
-EXPOSE 3000
+# Copy frontend build
+COPY --from=builder /app/web/dist /app/web/dist
+
+EXPOSE 3000 5173
+
 # Set the command to run the application
-CMD ["pnpm", "start", "--non-interactive"]
+CMD ["sh", "-c", "docker-entrypoint.sh"]
