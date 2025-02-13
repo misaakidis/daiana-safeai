@@ -130,7 +130,7 @@ const startAgents = async () => {
   let serverPort = parseInt(settings.SERVER_PORT || "3000");
   const args = parseArguments();
 
-  let charactersArg = args.characters || args.character;
+  let charactersArg = args.characters || args.character || "characters/daiana.character.json";
   let characters = [character];
 
   console.log("charactersArg", charactersArg);
