@@ -1,6 +1,6 @@
 services:
     eliza:
-        command: ["pnpm", "start", "--character=./characters/eliza.character.json"]
+        command: ["pnpm", "start", "--character=./characters/daiana.character.json"]
         build:
             context: .
             dockerfile: Dockerfile
@@ -9,8 +9,27 @@ services:
         volumes:
             - ./data:/app/data
         environment:
-            - OPENROUTER_API_KEY=
+            - VENICE_API_KEY=
             - ELEVENLABS_XI_API_KEY=
+            - DISCORD_APPLICATION_ID=
+            - DISCORD_API_TOKEN=
+            - TELEGRAM_BOT_TOKEN=
+            - TWITTER_DRY_RUN=false
+            - TWITTER_USERNAME=
+            - TWITTER_PASSWORD=
+            - TWITTER_EMAIL=
+            - TWITTER_COOKIES=
+            - X_SERVER_URL=
+            - XAI_API_KEY=
+            - XAI_MODEL=
+            - POST_INTERVAL_MIN=
+            - POST_INTERVAL_MAX=
+            - WALLET_PRIVATE_KEY=
+            - WALLET_PUBLIC_KEY=
+            - SMALL_VENICE_MODEL=deepseek-r1-llama-70b
+            - MEDIUM_VENICE_MODEL=deepseek-r1-llama-70b
+            - LARGE_VENICE_MODEL=deepseek-r1-671b
+            - IMAGE_VENICE_MODEL=flux-dev
             - ELEVENLABS_MODEL_ID=eleven_multilingual_v2
             - ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
             - ELEVENLABS_VOICE_STABILITY=0.5
@@ -19,10 +38,6 @@ services:
             - ELEVENLABS_VOICE_USE_SPEAKER_BOOST=false
             - ELEVENLABS_OPTIMIZE_STREAMING_LATENCY=4
             - ELEVENLABS_OUTPUT_FORMAT=pcm_16000
-            - SOL_ADDRESS=So11111111111111111111111111111111111111112
-            - SLIPPAGE=1
-            - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
-            - HELIUS_API_KEY=
             - SERVER_PORT=3000
         ports:
             - "3000:3000"
