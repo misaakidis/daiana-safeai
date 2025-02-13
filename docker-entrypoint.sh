@@ -1,6 +1,7 @@
 #!/bin/bash
 
-pnpm start --non-interactive &
-
 cd web
-vite serve &
+vite preview --host &
+
+cd ..
+pnpm start

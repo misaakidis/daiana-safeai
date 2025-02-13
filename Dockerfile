@@ -69,7 +69,9 @@ COPY --from=builder /app/pnpm-lock.yaml /app/
 # Copy frontend build
 COPY --from=builder /app/web/dist /app/web/dist
 
-EXPOSE 3000 5173
+COPY docker-entrypoint.sh /app/
+
+EXPOSE 3000 4173
 
 # Set the command to run the application
 CMD ["sh", "-c", "docker-entrypoint.sh"]
