@@ -1,9 +1,10 @@
 *.ts
-dist
 !index.ts
 !character.ts
+!web/**/*.ts
+
 .env
-node_modules
+node_modules/
 dist/
 
 db.sqlite
