@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd web
+cd /app/web/
 vite preview --host &
 
-cd ..
+cd /app/
 pnpm start
