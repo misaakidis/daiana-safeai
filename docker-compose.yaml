@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   daiana:
     build:
@@ -5,29 +7,49 @@ services:
       dockerfile: Dockerfile
       args:
         NODE_ENV: production
-    stdin_open: true
-    tty: true
+    image: daiana:latest
+    container_name: daiana
+    restart: unless-stopped
+    init: true
+    user: appuser
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     volumes:
-      - ./data:/app/data
+      - ./data:/app/data:rw
     environment:
       NODE_ENV: production
+      # API Keys and Tokens
       VENICE_API_KEY: ${VENICE_API_KEY}
       ELEVENLABS_XI_API_KEY: ${ELEVENLABS_XI_API_KEY}
       DISCORD_APPLICATION_ID: ${DISCORD_APPLICATION_ID}
       DISCORD_API_TOKEN: ${DISCORD_API_TOKEN}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      XAI_API_KEY: ${XAI_API_KEY}
+      BIRDEYE_API_KEY: ${BIRDEYE_API_KEY}
+      TOGETHER_API_KEY: ${TOGETHER_API_KEY}
+      
+      # Twitter Configuration
       TWITTER_DRY_RUN: ${TWITTER_DRY_RUN:-false}
       TWITTER_USERNAME: ${TWITTER_USERNAME}
       TWITTER_PASSWORD: ${TWITTER_PASSWORD}
       TWITTER_EMAIL: ${TWITTER_EMAIL}
       TWITTER_COOKIES: ${TWITTER_COOKIES}
+      
+      # Service Configuration
       X_SERVER_URL: ${X_SERVER_URL}
-      XAI_API_KEY: ${XAI_API_KEY}
       XAI_MODEL: ${XAI_MODEL}
-      POST_INTERVAL_MIN: ${POST_INTERVAL_MIN}
-      POST_INTERVAL_MAX: ${POST_INTERVAL_MAX}
+      POST_INTERVAL_MIN: ${POST_INTERVAL_MIN:-90}
+      POST_INTERVAL_MAX: ${POST_INTERVAL_MAX:-180}
+      
+      # Wallet Configuration
       WALLET_PRIVATE_KEY: ${WALLET_PRIVATE_KEY}
       WALLET_PUBLIC_KEY: ${WALLET_PUBLIC_KEY}
+      
+      # Model Configuration
       IMAGE_VENICE_MODEL: ${IMAGE_VENICE_MODEL:-flux-dev}
       ELEVENLABS_MODEL_ID: ${ELEVENLABS_MODEL_ID:-eleven_multilingual_v2}
       ELEVENLABS_VOICE_ID: ${ELEVENLABS_VOICE_ID:-21m00Tcm4TlvDq8ikWAM}
@@ -37,11 +59,30 @@ services:
       ELEVENLABS_VOICE_USE_SPEAKER_BOOST: ${ELEVENLABS_VOICE_USE_SPEAKER_BOOST:-false}
       ELEVENLABS_OPTIMIZE_STREAMING_LATENCY: ${ELEVENLABS_OPTIMIZE_STREAMING_LATENCY:-4}
       ELEVENLABS_OUTPUT_FORMAT: ${ELEVENLABS_OUTPUT_FORMAT:-pcm_16000}
+      
+      # Server Configuration
       SERVER_PORT: ${SERVER_PORT:-3000}
       VITE_SERVER_PORT: ${VITE_SERVER_PORT:-4173}
+      DAEMON_PROCESS: ${DAEMON_PROCESS:-false}
     ports:
-      - "3000:3000"
-      - "4173:4173"
-    command: ["sh", "docker-entrypoint.sh"]
-    init: true
-    restart: always
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:4173:4173"
+    networks:
+      - daiana_net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  daiana_net:
+    driver: bridge

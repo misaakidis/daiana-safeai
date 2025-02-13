@@ -1,77 +1,82 @@
-# Use a specific Node.js version for better reproducibility
-FROM node:23.3.0-slim AS builder
+# Build stage
+FROM node:20-slim AS builder
 
-# Install pnpm globally and install necessary build tools
-RUN npm install -g pnpm@9.15.1 vite && \
-    apt-get update && \
-    apt-get install -y git python3 make g++ && \
+# Install pnpm and other build dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git \
+    python3 \
+    make \
+    g++ && \
+    npm install -g pnpm@9.15.1 vite && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Python 3 as the default python
-RUN ln -s /usr/bin/python3 /usr/bin/python
-
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and other configuration files
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+# Copy package files first to leverage cache
+COPY package.json pnpm-lock.yaml ./
+COPY web/package.json web/pnpm-lock.yaml ./web/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source files
 COPY tsconfig.json ./
+COPY src ./src
+COPY characters ./characters
+COPY web ./web
 
-# Copy the rest of the application code
-COPY ./src ./src
-COPY ./characters ./characters
-
-# Copy web directory for frontend client
-COPY ./web ./web
-
-# Install dependencies and build the project
-RUN pnpm install 
-RUN pnpm build 
+# Build backend
+RUN pnpm build
 
 # Build frontend
 WORKDIR /app/web
-COPY ./web/package.json ./
-COPY ./web/pnpm-lock.yaml ./
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 RUN vite build
 
-# Create dist directory and set permissions
-RUN mkdir -p /app/dist && \
-    chown -R node:node /app && \
-    chmod -R 755 /app
+# Production stage
+FROM node:20-slim
 
-# Switch to node user
-USER node
-
-# Create a new stage for the final image
-FROM node:23.3.0-slim
-
-# Install runtime dependencies if needed
-RUN npm install -g pnpm@9.15.1 vite
+# Install runtime dependencies
 RUN apt-get update && \
-    apt-get install -y git python3 && \
+    apt-get install -y --no-install-recommends \
+    python3 && \
+    npm install -g pnpm@9.15.1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy built artifacts and production dependencies from the builder stage
-COPY --from=builder /app/package.json /app/
-COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/src /app/src
-COPY --from=builder /app/characters /app/characters
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/tsconfig.json /app/
-COPY --from=builder /app/pnpm-lock.yaml /app/
+# Create app user
+RUN groupadd -r appuser && \
+    useradd -r -g appuser -s /bin/bash appuser && \
+    mkdir -p /app/data && \
+    chown -R appuser:appuser /app
 
-# Copy frontend build
-COPY --from=builder /app/web/dist /app/web/dist
+# Copy built artifacts
+COPY --from=builder --chown=appuser:appuser /app/package.json /app/pnpm-lock.yaml ./
+COPY --from=builder --chown=appuser:appuser /app/dist ./dist
+COPY --from=builder --chown=appuser:appuser /app/web/dist ./web/dist
+COPY --from=builder --chown=appuser:appuser /app/characters ./characters
+COPY docker-entrypoint.sh ./
 
-COPY docker-entrypoint.sh /app/
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
 
+# Switch to non-root user
+USER appuser
+
+# Set environment variables
+ENV NODE_ENV=production \
+    PORT=3000
+
+# Expose ports
 EXPOSE 3000 4173
 
-# Set the command to run the application
-CMD ["sh", "-c", "docker-entrypoint.sh"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Set entrypoint
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]
