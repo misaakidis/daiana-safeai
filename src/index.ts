@@ -80,6 +80,9 @@ async function startAgent(character: Character, directClient: DirectClient) {
     character.username ??= character.name;
 
     const token = getTokenForProvider(character.modelProvider, character);
+    if (!token) {
+      throw new Error(`No token found for provider ${character.modelProvider}`);
+    }
     const dataDir = path.join(__dirname, "../data");
 
     if (!fs.existsSync(dataDir)) {

@@ -7,7 +7,6 @@ import path from "node:path";
 export default defineConfig(({ mode }) => {
     const envDir = path.resolve(__dirname, "..");
     const env = loadEnv(mode, envDir, "");
-    const webUrl = process.env.WEB_URL;
     return {
         plugins: [
             react(),

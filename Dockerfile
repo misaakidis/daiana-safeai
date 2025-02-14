@@ -36,9 +36,11 @@ RUN pnpm build
 # Backend final stage
 FROM backend-base AS backend-final
 
-# Copy built backend
+# Copy both built files and source files
 COPY --from=backend-builder /app/dist ./dist
+COPY --from=backend-builder /app/src ./src
 COPY --from=backend-builder /app/characters ./characters
+COPY tsconfig.json ./
 
 # Set permissions
 RUN chown -R node:node /app && chmod -R 755 /app
