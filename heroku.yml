@@ -1,6 +1,8 @@
 build:
   docker:
-    web: Dockerfile
+    web: 
+      dockerfile: Dockerfile
+      target: backend-final
 
 run:
-  web: /bin/bash /app/docker-entrypoint.sh
+  web: pm2-runtime start pnpm --name daiana -- start
