@@ -8,5 +8,5 @@ build:
       target: backend-final
 
 run:
-  web: pm2-runtime start vite --name web -- preview --host
+  web: vite preview --host
   worker: pm2-runtime start pnpm --name daiana -- start
