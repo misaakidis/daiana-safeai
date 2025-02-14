@@ -22,6 +22,8 @@ import {
   parseArguments,
 } from "./config/index.ts";
 import { initializeDatabase } from "./database/index.ts";
+import { imageGenerationPlugin } from "@elizaos/plugin-image-generation";
+import { generateImageAction } from "./actions/generateImage.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,9 +60,12 @@ export function createAgent(
       bootstrapPlugin,
       nodePlugin,
       // character.settings?.secrets?.WALLET_PUBLIC_KEY ? solanaPlugin : null,
+      imageGenerationPlugin,
     ].filter(Boolean),
     providers: [],
-    actions: [],
+    actions: [
+      generateImageAction,
+    ],
     services: [],
     managers: [],
     cacheManager: cache,
