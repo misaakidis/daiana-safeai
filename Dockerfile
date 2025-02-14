@@ -1,8 +1,8 @@
-# Base stage: Install dependencies
+# Base stage for Node.js dependencies
 FROM node:23.3.0-slim AS base
 
-# Install pnpm, vite and pm2 globally
-RUN npm install -g pnpm@9.15.4 vite pm2
+# Install pnpm and pm2 globally
+RUN npm install -g pnpm@9.15.4 pm2
 
 # Install build dependencies
 RUN apt-get update && \
@@ -13,28 +13,17 @@ RUN apt-get update && \
 # Set Python 3 as the default python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Set the working directory
+
+# Backend base stage
+FROM base AS backend-base
+
 WORKDIR /app
 
-# Copy backend dependencies separately to optimize caching
 COPY package.json pnpm-lock.yaml ./
-
-# Install backend dependencies
 RUN pnpm install --frozen-lockfile
 
-WORKDIR /app/web
-
-# Copy frontend dependencies separately for caching
-COPY ./web/package.json ./web/pnpm-lock.yaml ./
-
-# Install frontend dependencies
-RUN pnpm install --frozen-lockfile
-
-
-# Builder stage: Build backend
-FROM base AS backend-builder
-
-WORKDIR /app
+# Backend builder stage
+FROM backend-base AS backend-builder
 
 # Copy source code
 COPY tsconfig.json ./
@@ -44,11 +33,39 @@ COPY ./characters ./characters
 # Build backend
 RUN pnpm build
 
+# Backend final stage
+FROM backend-base AS backend-final
 
-# Frontend stage: Build frontend
-FROM base AS frontend-builder
+# Copy built backend
+COPY --from=backend-builder /app/dist ./dist
+COPY --from=backend-builder /app/characters ./characters
+
+# Set permissions
+RUN chown -R node:node /app && chmod -R 755 /app
+
+# Switch to non-root user
+USER node
+
+# Expose backend port
+EXPOSE 3000
+
+CMD ["pm2-runtime", "start", "pnpm", "--name", "app", "--", "start"]
+
+
+# Frontend base stage
+FROM base AS frontend-base
 
 WORKDIR /app/web
+
+# Install vite globally
+RUN npm install -g vite
+
+# Copy frontend dependencies
+COPY ./web/package.json ./web/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Frontend builder stage
+FROM frontend-base AS frontend-builder
 
 # Copy frontend source code
 COPY ./web ./
@@ -56,27 +73,19 @@ COPY ./web ./
 # Build frontend
 RUN vite build
 
-
-# Final stage: Production image
-FROM base AS final
-
-# Set the working directory
-WORKDIR /app
-
-# Copy built backend
-COPY --from=backend-builder /app ./
+# Frontend final stage
+FROM frontend-base AS frontend-final
 
 # Copy built frontend
-COPY --from=frontend-builder /app/web/ ./web/
-
-# Copy entrypoint script
-COPY ./docker-entrypoint.sh ./
+COPY --from=frontend-builder /app/web/dist ./dist
 
 # Set permissions
 RUN chown -R node:node /app && chmod -R 755 /app
 
-# Switch to non-root user for security
+# Switch to non-root user
 USER node
 
-# Expose ports
-EXPOSE 3000 4173
+# Expose frontend port
+EXPOSE 4173
+
+CMD ["pm2-runtime", "start", "vite", "--name", "web", "--", "preview", "--host"]
