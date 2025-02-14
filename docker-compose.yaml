@@ -9,6 +9,7 @@ services:
     tty: true
     volumes:
       - ./data:/app/data
+      - ./generatedImages:/app/generatedImages
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       VENICE_API_KEY: ${VENICE_API_KEY}

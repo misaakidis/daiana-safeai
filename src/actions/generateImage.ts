@@ -1,4 +1,5 @@
 import { Action } from "@elizaos/core";
+import path from "path";
 
 export const generateImageAction: Action = {
   name: "generateImage",
@@ -23,11 +24,14 @@ export const generateImageAction: Action = {
       const result = await runtime.plugins.imageGeneration.generate({
         model: process.env.IMAGE_VENICE_MODEL || "flux-dev",
         prompt,
+        outputDir: 'generatedImages'
       });
+
+      const imageUrl = result.url;
 
       await runtime.reply({
         text: `✨ Generated image for: "${prompt}"`,
-        imageUrl: result.url
+        imageUrl
       });
       
       return true;
