@@ -1,8 +1,8 @@
 # Base stage: Install dependencies
 FROM node:23.3.0-slim AS base
 
-# Install pnpm globally
-RUN npm install -g pnpm@9.15.4 vite
+# Install pnpm, vite and pm2 globally
+RUN npm install -g pnpm@9.15.4 vite pm2
 
 # Install build dependencies
 RUN apt-get update && \

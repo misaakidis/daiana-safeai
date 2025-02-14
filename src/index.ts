@@ -172,6 +172,10 @@ const startAgents = async () => {
 };
 
 startAgents().catch((error) => {
-  elizaLogger.error("Unhandled error in startAgents:", error);
+  elizaLogger.error("Unhandled error in startAgents:", {
+    message: error.message,
+    name: error.name,
+    stack: process.env.NODE_ENV === 'production' ? undefined : error.stack, // Only log stack in non-production
+  });
   process.exit(1);
 });
