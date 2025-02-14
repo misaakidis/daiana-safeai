@@ -2,7 +2,7 @@
 FROM node:23.3.0-slim
 
 # Install pnpm globally and install necessary dependencies
-RUN npm install -g pnpm@9.15.1 vite && \
+RUN npm install -g pnpm@9.15.4 && \
     apt-get update && \
     apt-get install -y git python3 make g++ && \
     apt-get clean && \
@@ -23,9 +23,6 @@ COPY tsconfig.json ./
 COPY ./src ./src
 COPY ./characters ./characters
 
-# Copy web directory for frontend client
-COPY ./web ./web
-
 # Copy entrypoint script
 COPY ./docker-entrypoint.sh ./
 
@@ -34,11 +31,13 @@ RUN pnpm install && \
     pnpm build
 
 # Build frontend
-WORKDIR /app/web
-COPY ./web/package.json ./
-COPY ./web/pnpm-lock.yaml ./
-RUN pnpm install && \
-    vite build
+#COPY ./web ./web
+#WORKDIR /app/web
+#COPY ./web/package.json ./
+#COPY ./web/pnpm-lock.yaml ./
+#RUN npm install -g vite
+#RUN pnpm install && \
+#    vite build
 
 # Set permissions
 RUN chown -R node:node /app && \

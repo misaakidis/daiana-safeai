@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Docker entrypoint: Starting Daiana agent and Web client"
-
-cd /app/web/
-vite preview --host &
+#if [ -d "/app/web" ]; then
+#    cd /app/web/
+#    vite preview --host &
+#fi
 
 cd /app/
 pnpm start
