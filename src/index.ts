@@ -132,9 +132,33 @@ const checkPortAvailable = (port: number): Promise<boolean> => {
   });
 };
 
+const validateEnvironment = () => {
+  const validEnvironments = ['development', 'production', 'test'] as const;
+  type ValidEnvironment = typeof validEnvironments[number];
+  
+  const nodeEnv = process.env.NODE_ENV as ValidEnvironment;
+  
+  if (!nodeEnv) {
+    elizaLogger.error('NODE_ENV is not set');
+    process.exit(1);
+  }
+
+  if (!validEnvironments.includes(nodeEnv)) {
+    elizaLogger.error(`Invalid NODE_ENV: ${nodeEnv}. Must be one of: ${validEnvironments.join(', ')}`);
+    process.exit(1);
+  }
+
+  // Log startup environment
+  elizaLogger.info(`Starting server in ${nodeEnv} mode`);
+  elizaLogger.info(`DAIANA_URL: ${process.env.DAIANA_URL}`);
+  elizaLogger.info(`WEB_URL: ${process.env.WEB_URL}`);
+};
+
 const startAgents = async () => {
+  validateEnvironment();
+  
   const directClient = new DirectClient();
-  let serverPort = parseInt(settings.SERVER_PORT || "3000");
+  let serverPort = parseInt(process.env.DAIANA_SERVER_PORT || "3000");
   const args = parseArguments();
 
   let charactersArg = args.characters || args.character || "characters/daiana.character.json";
@@ -169,16 +193,15 @@ const startAgents = async () => {
   // Configure CORS
   app.use(cors({
     origin: [
-      'http://localhost:4173',
-      process.env.VITE_APP_URL,
-      process.env.CORS_ORIGIN
+      process.env.CORS_ORIGIN,
+      process.env.WEB_URL,
     ].filter(Boolean),
     methods: ['GET', 'POST'],
   }));
 
   directClient.start(serverPort);
 
-  if (serverPort !== parseInt(settings.SERVER_PORT || "3000")) {
+  if (serverPort !== parseInt(process.env.DAIANA_SERVER_PORT || "3000")) {
     elizaLogger.log(`Server started on alternate port ${serverPort}`);
   }
 

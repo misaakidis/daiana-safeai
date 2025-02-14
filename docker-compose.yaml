@@ -14,12 +14,12 @@ services:
     environment:
       # Common Configuration
       NODE_ENV: ${NODE_ENV:-production}
-      SERVER_PORT: ${SERVER_PORT:-3000}
+      DAIANA_SERVER_PORT: ${DAIANA_SERVER_PORT:-3000}
       DAEMON_PROCESS: ${DAEMON_PROCESS:-true}
       
       # CORS & URLs
       CORS_ORIGIN: ${CORS_ORIGIN}
-      VITE_APP_URL: ${VITE_APP_URL:-https://daiana.live}
+      WEB_URL: ${WEB_URL:-http://localhost:4173}
       
       # Venice AI Configuration
       VENICE_API_KEY: ${VENICE_API_KEY}
@@ -73,9 +73,10 @@ services:
         NODE_ENV: ${NODE_ENV:-production}
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      VITE_SERVER_PORT: ${VITE_SERVER_PORT:-4173}
+      WEB_SERVER_PORT: ${WEB_SERVER_PORT:-4173}
       DAIANA_URL: ${DAIANA_URL:-http://localhost:3000}
-      VITE_APP_URL: ${VITE_APP_URL:-https://daiana.live}
+      WEB_URL: ${WEB_URL:-http://localhost:4173}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost}
     ports:
       - "4173:4173"
     init: true

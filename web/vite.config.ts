@@ -7,6 +7,7 @@ import path from "node:path";
 export default defineConfig(({ mode }) => {
     const envDir = path.resolve(__dirname, "..");
     const env = loadEnv(mode, envDir, "");
+    const webUrl = process.env.WEB_URL;
     return {
         plugins: [
             react(),
@@ -19,10 +20,8 @@ export default defineConfig(({ mode }) => {
         clearScreen: false,
         envDir,
         define: {
-            "import.meta.env.VITE_SERVER_PORT": JSON.stringify(
-                env.SERVER_PORT || "3000"
-            ),
             'process.env.DAIANA_URL': JSON.stringify(process.env.DAIANA_URL),
+            'process.env.WEB_URL': JSON.stringify(process.env.WEB_URL),
         },
         build: {
             outDir: "dist",
@@ -32,10 +31,11 @@ export default defineConfig(({ mode }) => {
             cssCodeSplit: true,
         },
         preview: {
-            port: parseInt(env.VITE_SERVER_PORT || "4173"),
+            port: parseInt(env.WEB_SERVER_PORT || "4173"),
             host: '0.0.0.0',
             strictPort: true,
-            cors: true
+            cors: true,
+            allowedHosts: (env.ALLOWED_HOSTS || 'localhost').split(',')
         },
         resolve: {
             alias: {
