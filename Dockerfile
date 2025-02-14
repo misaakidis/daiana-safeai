@@ -1,7 +1,7 @@
 # Use a specific Node.js version for better reproducibility
-FROM node:23.3.0-slim AS builder
+FROM node:23.3.0-slim
 
-# Install pnpm globally and install necessary build tools
+# Install pnpm globally and install necessary dependencies
 RUN npm install -g pnpm@9.15.1 vite && \
     apt-get update && \
     apt-get install -y git python3 make g++ && \
@@ -26,49 +26,26 @@ COPY ./characters ./characters
 # Copy web directory for frontend client
 COPY ./web ./web
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh ./
+
 # Install dependencies and build the project
-RUN pnpm install 
-RUN pnpm build 
+RUN pnpm install && \
+    pnpm build
 
 # Build frontend
 WORKDIR /app/web
 COPY ./web/package.json ./
 COPY ./web/pnpm-lock.yaml ./
-RUN pnpm install
-RUN vite build
+RUN pnpm install && \
+    vite build
 
-# Create dist directory and set permissions
-RUN mkdir -p /app/dist && \
-    chown -R node:node /app && \
+# Set permissions
+RUN chown -R node:node /app && \
     chmod -R 755 /app
 
-# Switch to node user
+# Switch to node user for security
 USER node
 
-# Create a new stage for the final image
-FROM node:23.3.0-slim
-
-# Install runtime dependencies if needed
-RUN npm install -g pnpm@9.15.1 vite
-RUN apt-get update && \
-    apt-get install -y git python3 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-# Copy built artifacts and production dependencies from the builder stage
-COPY --from=builder /app/package.json /app/
-COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/src /app/src
-COPY --from=builder /app/characters /app/characters
-COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/tsconfig.json /app/
-COPY --from=builder /app/pnpm-lock.yaml /app/
-
-# Copy frontend build
-COPY --from=builder /app/web/dist /app/web/dist
-
-COPY docker-entrypoint.sh /app/
-
+# Expose ports
 EXPOSE 3000 4173
