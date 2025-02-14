@@ -72,8 +72,24 @@ FROM frontend-base AS frontend-builder
 # Copy frontend source code
 COPY ./web ./
 
+# Add ARG statements
+ARG NODE_ENV
+ARG DAIANA_SERVER_PORT
+ARG WEB_SERVER_PORT
+ARG DAIANA_URL
+ARG WEB_URL
+ARG ALLOWED_HOSTS
+ARG CORS_ORIGIN
+
 # Build frontend
-RUN vite build
+RUN NODE_ENV=${NODE_ENV} \
+    DAIANA_SERVER_PORT=${DAIANA_SERVER_PORT} \
+    WEB_SERVER_PORT=${WEB_SERVER_PORT} \
+    DAIANA_URL=${DAIANA_URL} \
+    WEB_URL=${WEB_URL} \
+    ALLOWED_HOSTS=${ALLOWED_HOSTS} \
+    CORS_ORIGIN=${CORS_ORIGIN} \
+    vite build
 
 # Frontend final stage
 FROM frontend-base AS frontend-final
