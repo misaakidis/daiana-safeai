@@ -34,7 +34,10 @@ export default defineConfig(({ mode }) => {
             host: '0.0.0.0',
             strictPort: true,
             cors: true,
-            allowedHosts: (env.ALLOWED_HOSTS || 'localhost').split(',')
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            allowedHosts: 'all'
         },
         resolve: {
             alias: {
