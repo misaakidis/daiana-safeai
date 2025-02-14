@@ -2,7 +2,7 @@
 FROM node:23.3.0-slim AS base
 
 # Install pnpm globally
-RUN npm install -g pnpm@9.15.4
+RUN npm install -g pnpm@9.15.4 vite
 
 # Install build dependencies
 RUN apt-get update && \
@@ -16,10 +16,18 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Set the working directory
 WORKDIR /app
 
-# Copy package manager files separately to optimize caching
+# Copy backend dependencies separately to optimize caching
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
+# Install backend dependencies
+RUN pnpm install --frozen-lockfile
+
+WORKDIR /app/web
+
+# Copy frontend dependencies separately for caching
+COPY ./web/package.json ./web/pnpm-lock.yaml ./
+
+# Install frontend dependencies
 RUN pnpm install --frozen-lockfile
 
 
@@ -42,15 +50,6 @@ FROM base AS frontend-builder
 
 WORKDIR /app/web
 
-# Copy frontend dependencies separately for caching
-COPY ./web/package.json ./web/pnpm-lock.yaml ./
-
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# Install Vite globally
-RUN npm install -g vite
-
 # Copy frontend source code
 COPY ./web ./
 
@@ -59,20 +58,16 @@ RUN vite build
 
 
 # Final stage: Production image
-FROM node:23.3.0-slim AS final
+FROM base AS final
 
 # Set the working directory
 WORKDIR /app
 
-# Copy runtime dependencies from the base image to reduce final image size
-COPY --from=base /usr/local/bin/pnpm /usr/local/bin/pnpm
-COPY --from=base /usr/lib/node_modules /usr/lib/node_modules
-
 # Copy built backend
-COPY --from=backend-builder /app/dist ./dist
+COPY --from=backend-builder /app ./
 
 # Copy built frontend
-COPY --from=frontend-builder /app/web/dist ./web/dist
+COPY --from=frontend-builder /app/web/ ./web/
 
 # Copy entrypoint script
 COPY ./docker-entrypoint.sh ./
