@@ -3,4 +3,4 @@ build:
     web: Dockerfile
 
 run:
-  web: sh /app/docker-entrypoint.sh
+  web: /bin/bash /app/docker-entrypoint.sh

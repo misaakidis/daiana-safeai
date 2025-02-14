@@ -27,7 +27,7 @@ COPY ./characters ./characters
 COPY ./web ./web
 
 # Copy entrypoint script
-COPY docker-entrypoint.sh ./
+COPY ./docker-entrypoint.sh ./
 
 # Install dependencies and build the project
 RUN pnpm install && \

@@ -42,6 +42,6 @@ services:
     ports:
       - "3000:3000"
       - "4173:4173"
-    command: ["sh", "docker-entrypoint.sh"]
+    command: ["/bin/bash", "/app/docker-entrypoint.sh"]
     init: true
     restart: always
