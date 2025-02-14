@@ -1,8 +1,12 @@
 build:
   docker:
-    web: 
+    web:
+      dockerfile: Dockerfile
+      target: frontend-final
+    worker:
       dockerfile: Dockerfile
       target: backend-final
 
 run:
-  web: pm2-runtime start pnpm --name daiana -- start
+  web: pm2-runtime start vite --name web -- preview --host
+  worker: pm2-runtime start pnpm --name daiana -- start
