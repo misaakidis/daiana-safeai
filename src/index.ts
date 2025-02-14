@@ -24,6 +24,8 @@ import {
 import { initializeDatabase } from "./database/index.ts";
 import { imageGenerationPlugin } from "@elizaos/plugin-image-generation";
 import { generateImageAction } from "./actions/generateImage.ts";
+import express from 'express';
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -161,6 +163,18 @@ const startAgents = async () => {
     // wrap it so we don't have to inject directClient later
     return startAgent(character, directClient);
   };
+
+  const app = express();
+
+  // Configure CORS
+  app.use(cors({
+    origin: [
+      'http://localhost:4173',
+      process.env.VITE_APP_URL,
+      process.env.CORS_ORIGIN
+    ].filter(Boolean),
+    methods: ['GET', 'POST'],
+  }));
 
   directClient.start(serverPort);
 

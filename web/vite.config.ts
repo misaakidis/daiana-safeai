@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
             "import.meta.env.VITE_SERVER_PORT": JSON.stringify(
                 env.SERVER_PORT || "3000"
             ),
+            'process.env.DAIANA_URL': JSON.stringify(process.env.DAIANA_URL),
         },
         build: {
             outDir: "dist",
@@ -29,6 +30,12 @@ export default defineConfig(({ mode }) => {
             cssMinify: true,
             sourcemap: false,
             cssCodeSplit: true,
+        },
+        preview: {
+            port: parseInt(env.VITE_SERVER_PORT || "4173"),
+            host: '0.0.0.0',
+            strictPort: true,
+            cors: true
         },
         resolve: {
             alias: {
