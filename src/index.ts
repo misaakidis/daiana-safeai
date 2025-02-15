@@ -2,7 +2,6 @@ import { DirectClient } from "@elizaos/client-direct";
 import {
   AgentRuntime,
   elizaLogger,
-  settings,
   stringToUuid,
   type Character,
 } from "@elizaos/core";
@@ -26,6 +25,9 @@ import { imageGenerationPlugin } from "@elizaos/plugin-image-generation";
 import { generateImageAction } from "./actions/generateImage.ts";
 import express from 'express';
 import cors from 'cors';
+import { Buffer } from 'buffer';
+import { generateImage } from "./utils/imageGeneration.js";
+import { MediaData } from "../packages/client-twitter/src/types.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -99,6 +101,46 @@ async function startAgent(character: Character, directClient: DirectClient) {
     await runtime.initialize();
 
     runtime.clients = await initializeClients(character, runtime);
+
+    // Enhance Twitter client after initialization
+    const twitterManager = runtime.clients[1];
+    if (twitterManager?.post) {
+      try {
+        const originalPostTweet = twitterManager.post.postTweet.bind(twitterManager.post);
+        twitterManager.post.postTweet = async (
+          runtime: any,
+          client: any,
+          text: string,
+          roomId: string,
+          rawContent: any,
+          username: string,
+          mediaData?: MediaData[]
+        ) => {
+          try {
+            const memeWorthy = /funny|cool|awesome|wild|crazy|amazing|wow|meme/i.test(text) ||
+              text.includes('😂') || text.includes('🤣');
+            
+            if (memeWorthy && Math.random() < 0.9) {
+              const attachment = await generateImage(runtime, text, true);
+              if (attachment) {
+                const base64Data = attachment.data.split(',')[1];
+                const meme: MediaData = {
+                  data: Buffer.from(base64Data, 'base64'),
+                  mediaType: attachment.contentType
+                };
+                mediaData = mediaData ? [...mediaData, meme] : [meme];
+              }
+            }
+            return await originalPostTweet(runtime, client, text, roomId, rawContent, username, mediaData);
+          } catch (error) {
+            console.error('Twitter post error:', error);
+            return await originalPostTweet(runtime, client, text, roomId, rawContent, username, mediaData);
+          }
+        };
+      } catch (error) {
+        console.error('Error setting up Twitter post enhancement:', error);
+      }
+    }
 
     directClient.registerAgent(runtime);
 
