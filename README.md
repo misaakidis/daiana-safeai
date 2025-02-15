@@ -1,26 +1,33 @@
-# Daiana - Your Friendly DAO Governance Assistant
+# Daiana .::. AI Sidekick for DAOs 🦸
 
-Daiana is an AI-powered chat agent that helps DAOs and their communities understand and navigate decentralized governance. Through natural conversations on Telegram and Twitter, she makes DAO governance accessible and engaging through explanations, examples, and memes.
+Ever wished understanding DAOs was as easy as chatting with a friend? Meet Daiana, your AI companion in the world of decentralized governance. She transforms complex DAO concepts into engaging conversations, sprinkles in some memes for fun, and helps you navigate the fascinating world of Web3 governance.
 
-## 🌟 Key Features
+## 🔗 Connect with Daiana
+- 🌐 Website: [daiana.live](https://daiana.live)
+- 🐦 Twitter: [@daiana_safeai](https://x.com/daiana_safeai)
+- 💬 Telegram: [@DaianaSAFE_bot](https://t.me/DaianaSAFE_bot)
 
-### Governance Education
-- Explain DAO concepts through clear examples and analogies
-- Share insights from real-world DAO successes and failures
-- Help draft and review governance proposals
-- Make governance fun with custom memes and visuals
+## ✨ What Makes Daiana Special?
 
-### Social Integration
-- Chat naturally with users through Telegram
-- Engage with community on Twitter
-- Generate educational content and memes
-- Maintain consistent presence across platforms
+### 🧠 **Your DAO’s Trusted Sidekick**
+Daiana isn’t just an AI; she’s a **governance-savvy agent** designed to support DAOs at every stage, from proposal review to community engagement. She reads, verifies, and summarizes DAO proposals, making governance **simpler, safer, and more engaging.**
 
-### AI Capabilities
-- Natural language conversations about DAOs
-- Custom meme generation
-- Autonomous content posting
-- Configurable behavior and posting schedules
+### 🎉 **Governance Made Fun**
+- Chat about DAOs like you're talking to a friend
+- Learn from real-world examples and governance war stories
+- Get governance concepts explained through memes
+- Understand complex ideas through simple analogies
+
+### ⏰ **Always Available**
+- Jump into conversations on Telegram
+- Engage with the community on Twitter
+- Get quick answers to your DAO questions
+- Share governance memes that actually make sense
+
+### 📢 **Engages the DAO Community**
+- Posts governance updates and memes on social media
+- Keeps members informed on DAO activities
+- Helps drive participation & engagement
 
 ## 🚀 Getting Started
 
@@ -34,7 +41,7 @@ cd daiana
 ```bash
 cp .env.example .env
 ```
-Edit `.env` with your API keys and configuration settings
+Edit `.env` with your API keys and configuration settings.
 
 3. Install dependencies:
 ```bash
@@ -53,7 +60,7 @@ pnpm install
 vite preview
 ```
 
-Alternatively, you can run Daiana in Docker:
+Want to use Docker? We've got you covered:
 ```bash
 docker compose up -d
 ```
@@ -65,28 +72,46 @@ docker compose up -d
 - `TWITTER_USERNAME`: Twitter account username
 - `TWITTER_EMAIL`: Email associated with Twitter account
 - `TWITTER_PASSWORD`: Password for Twitter account
-- `POST_INTERVAL_MIN`: Minimum minutes between twitter posts
-- `POST_INTERVAL_MAX`: Maximum minutes between twitter posts
-- `TWITTER_DRY_RUN`: Set to true to simulate twitter posting without actually tweeting
+- `POST_INTERVAL_MIN`: Minimum minutes between Twitter posts
+- `POST_INTERVAL_MAX`: Maximum minutes between Twitter posts
+- `TWITTER_DRY_RUN`: Set to true to simulate Twitter posting without actually tweeting
 
-## 🔄 Future Plans
+## 🔮 Roadmap: The Future of DAO Treasury Management
 
-- SAFE wallet integration for treasury management
-- Proposal validation and monitoring
-- DeFi portfolio optimization
-- Advanced governance analytics
-- Enhanced security features
+Daiana is evolving into a **co-governance agent** that helps DAOs operate more securely and efficiently. Here's what’s coming soon:
 
-## 🤝 Contributing
+### 🔍 **AI-Powered Transparency & Security**
+- Reads and **summarizes DAO proposals**
+- Explains how **treasury funds** will be impacted
+- Detects **misaligned transactions** that don’t match the proposal
+- Notifies DAO members of governance decisions in real time
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
+### 🔐 **SAFE Wallet Integration & Treasury Management**
+Daiana will **co-manage DAO treasuries**, ensuring that funds are only spent as intended. For a **0.1% fee of DAO treasuries**, she will:
+- **Co-sign transactions** in a SAFE multisig wallet
+- **Validate transactions** against proposal texts and DAO constitutions
+- **Propose DeFi opportunities** to optimize treasury funds
+
+### 📈 **DeFi Portfolio Optimization**
+- Identifies safe yield farming opportunities
+- Manages risk-adjusted investment strategies for DAO treasuries
+- Helps DAOs make informed financial decisions
+
+### 📣 **Community Engagement & Growth**
+- Keeps governance discussions alive with regular social media updates
+- Encourages member participation through memes, polls, and reminders
+
+## 🤝 Join the Community
+
+We love contributions! Whether it's fixing bugs, adding features, or improving documentation - every contribution makes Daiana better for everyone. Open an issue or submit a pull request to get started.
 
 ## 📜 License
 
 This project is licensed under the MIT License. See the [LICENSE file](LICENSE) for details.
 
-Developed for the [SAFE Agentathon 2025](https://safe.global/ai)
+Developed with 💜 for the [SAFE Agentathon 2025](https://safe.global/ai)
 
-## 📞 Contact
+## 💌 Get in Touch
 
-For any questions or support, please contact us at [hi@daiana.live](mailto:hi@daiana.live)
+Questions? Ideas? Just want to chat about DAOs? Reach out to Daiana at [hi@daiana.live](mailto:hi@daiana.live)
+
