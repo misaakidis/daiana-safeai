@@ -2,10 +2,25 @@
 
 Ever wished understanding DAOs was as easy as chatting with a friend? Meet Daiana, your AI companion in the world of decentralized governance. She transforms complex DAO concepts into engaging conversations, sprinkles in some memes for fun, and helps you navigate the fascinating world of Web3 governance.
 
+<p align="center">
+  <img src="assets/avatar.jpg" alt="Daiana Avatar" width="200"/>
+</p>
+
 ## 🔗 Connect with Daiana
 - 🌐 Website: [daiana.live](https://daiana.live)
 - 🐦 Twitter: [@daiana_safeai](https://x.com/daiana_safeai)
 - 💬 Telegram: [@DaianaSAFE_bot](https://t.me/DaianaSAFE_bot)
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td><img src="assets/screenshot1.png" alt="Twitter Feed" width="280"/></td>
+    <td><img src="assets/screenshot2.png" alt="Telegram Chat" width="280"/></td>
+    <td><img src="assets/screenshot3.png" alt="Telegram Chat" width="280"/></td>
+  </tr>
+</table>
+
 
 ## ✨ What Makes Daiana Special?
 
@@ -76,6 +91,11 @@ docker compose up -d
 - `POST_INTERVAL_MAX`: Maximum minutes between Twitter posts
 - `TWITTER_DRY_RUN`: Set to true to simulate Twitter posting without actually tweeting
 
+<p align="center">
+  <img src="assets/banner.jpg" alt="Daiana Banner">
+</p>
+
+
 ## 🔮 Roadmap: The Future of DAO Treasury Management
 
 Daiana is evolving into a **co-governance agent** that helps DAOs operate more securely and efficiently. Here's what’s coming soon:
@@ -109,7 +129,7 @@ We love contributions! Whether it's fixing bugs, adding features, or improving d
 
 This project is licensed under the MIT License. See the [LICENSE file](LICENSE) for details.
 
-Developed with 💜 for the [SAFE Agentathon 2025](https://safe.global/ai)
+Developed with 🤖 for the [SAFE Agentathon 2025](https://safe.global/ai)
 
 ## 💌 Get in Touch
 
